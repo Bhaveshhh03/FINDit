@@ -9,7 +9,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
 const Post = (props) => {
     const [items, setitems] = useState([]);
     const [name, setname] = useState('');
-    const [imagedata, setimagedata] = useState('');
+    const [imagedata, setimagedata] = useState(null);
     const [picture, setpicture] = useState('');
     const [description, setdescription] = useState('');
     const [lastLocation, setlastLocation] = useState('');
@@ -27,6 +27,7 @@ const Post = (props) => {
     }
     useEffect(() => {
         getdata();
+        handleupload();
     }, [])
 
     const itemlist = async () => {
@@ -68,7 +69,7 @@ const Post = (props) => {
 
 
     }
-    const found = async () => {
+    const found = async (url) => {
         if (name.length > 0 && description.length && lastLocation.length > 0) {
             const docRef = await addDoc(collection(db, "items"), {
                 name: name,
@@ -76,7 +77,7 @@ const Post = (props) => {
                 last_location: lastLocation,
                 userId: auth.currentUser?.uid,
                 item_type: "Found",
-                item_image: picture,
+                item_image: url,
                 time: Date.now(),
                 username: data,
                 item_categories: selected
@@ -108,14 +109,13 @@ const Post = (props) => {
     const handleupload = async () => {
         const response = await fetch(imagedata);
         const blob = await response.blob();
-        const reference = ref(storage, 'user_item/' + Date.now());
+        const reference = storageRef(storage, 'user_item/' + Date.now());
 
         uploadBytes(reference, blob).then((snapshot) => {
             console.log("uploaded blob file");
             getDownloadURL(snapshot.ref).then((downloadUrl) => {
-
-                setpicture(downloadUrl);
-                console.log("new" + picture);
+                console.log(downloadUrl);
+                found(downloadUrl);
             })
         })
     }
@@ -136,13 +136,6 @@ const Post = (props) => {
 
 
         <View style={styles.container}>
-            
-            {imagedata !== null ? (<Image
-                source={{ uri: imagedata }}
-                width={100}
-                height={100}
-            />) : (<Iconic name="log-out-outline" size={25} color={"red"} />)}
-
             <View style={styles.postcontainer}>
                 <TextInput style={styles.field}
                     value={name}
