@@ -1,10 +1,82 @@
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Button, Modal, Linking } from "react-native";
 import { auth, db } from '../firebaseconfig';
 import Iconic from "react-native-vector-icons/Ionicons";
 import { useState } from "react";
 import { launchImageLibrary } from "react-native-image-picker";
 
 const Postcard = (props) => {
+    const [openmodal, setopenmodal] = useState(false);
+    const [Emailtext, setEmailtext] = useState('');
+    const emailsubmit=(useremail)=>{
+      Linking.openURL(`mailto:${useremail}?body:${Emailtext}`)
+    }
+    function emailtextbox(useremail) {
+
+        return (
+            <View>
+                <Modal visible={openmodal} animationType="slide" transparent={true} >
+                    <View style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.5)"
+                    }}>
+                        <View style={{
+                            backgroundColor: "#121e2c",
+                            padding: 10,
+                            height: '90%',
+                            width: '90%',
+                            borderRadius: 30,
+
+                        }}>
+                            <Text></Text>
+                            <TouchableOpacity onPress={() => setopenmodal(false)} style={{
+                                alignSelf: "center",
+                                paddingLeft: 250,
+                                paddingTop: 10
+                                }}><Iconic name="close-outline" size={30} color={"white"} />
+                            </TouchableOpacity>
+                            <Text style={{
+                                fontSize:16,
+                                color:'white',
+                                paddingLeft:29,
+                                marginTop:20
+                            }}>Enter Your Message to Send </Text>
+                            <TextInput
+                                value={Emailtext}
+                                onChangeText={(emailtext) => { setEmailtext(emailtext) }}
+                                placeholderTextColor="white"
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                                returnKeyType="next"
+                                blurOnSubmit={false}
+                                multiline={true}
+                                style={{ color: "white", fontSize: 18, width: "90%" ,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginTop:30,
+                                marginLeft:18,
+                                paddingLeft: 15,
+                                paddingRight: 15,
+                                borderWidth: 1,
+                                borderRadius: 15,
+                                borderColor: 'white',    
+                            }}
+                            />
+                           <View style={{
+                            marginLeft:50,
+                            marginRight:50,
+                            marginTop:30,
+                            
+                           }}>
+                           <Button title="Submit" color='#07ab67' onPress={()=>emailsubmit(useremail)}/>
+                           </View>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
+        )
+    }
     const [imagedata, setimagedata] = useState('');
     const pickimage = async () => {
         const result = await launchImageLibrary({
@@ -42,12 +114,13 @@ const Postcard = (props) => {
             </View>
             <View style={styles.postbutton}>
                 {props.item_type == "Lost" ?
-                    <TouchableOpacity>
+                    <TouchableOpacity  onPress={() => setopenmodal(true)}>
                         <Text>found</Text>
-                    </TouchableOpacity> : <TouchableOpacity>
+                    </TouchableOpacity> : <TouchableOpacity  onPress={() => setopenmodal(true)}>
                         <Text>Contact</Text>
                     </TouchableOpacity>}
             </View>
+            {emailtextbox(props.email)}
         </View>
     )
 }

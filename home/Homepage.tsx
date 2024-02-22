@@ -39,7 +39,8 @@ const Homepage = ({ navigation }) => {
                     last_location={item.last_location}
                     username={item.username}
                     item_type={item.item_type}
-                    item_image={item.item_image} />
+                    item_image={item.item_image}
+                    email={item.useremail} />
             )
         }
         if (selected == "All" || selected == "") {
@@ -49,7 +50,8 @@ const Homepage = ({ navigation }) => {
                     last_location={item.last_location}
                     username={item.username}
                     item_type={item.item_type}
-                    item_image={item.item_image} />
+                    item_image={item.item_image}
+                    email={item.useremail} />
             )
         }
     }

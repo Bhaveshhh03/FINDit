@@ -51,12 +51,7 @@ const YourItem = ({ navigation }) => {
                     <View style={styles.divider}>
                     </View>
                     <View style={styles.postbutton}>
-                        {props.item_type == "Lost" ?
-                            <TouchableOpacity>
-                                <Text>found</Text>
-                            </TouchableOpacity> : <TouchableOpacity>
-                                <Text>Contact</Text>
-                            </TouchableOpacity>}
+                      <TouchableOpacity><Text>Delete</Text></TouchableOpacity>
                     </View>
                 </View>
             )
@@ -72,7 +67,7 @@ const YourItem = ({ navigation }) => {
 
 
                     }
-                    keyExtractor={item => item.time}
+                    keyExtractor={item => item.id}
                 />
             </View>
         );

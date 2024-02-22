@@ -15,6 +15,7 @@ const Post = (props) => {
     const [lastLocation, setlastLocation] = useState('');
     const [userId, setuserId] = useState('');
     const [data, setdata] = useState();
+    const [email, setemail] = useState()
     const getdata = async () => {
         const q = query(collection(db, "users"), where("email", "==", auth.currentUser?.email));
 
@@ -23,6 +24,7 @@ const Post = (props) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.data());
             setdata(doc.data().name);
+            setemail(doc.data().email);
         });
     }
     useEffect(() => {
@@ -55,6 +57,7 @@ const Post = (props) => {
                 item_image: picture,
                 time: Date.now(),
                 username: data,
+                useremail: email,
                 item_categories: selected
             });
             Alert.alert("Post Added Succesfully!!")
@@ -80,6 +83,7 @@ const Post = (props) => {
                 item_image: url,
                 time: Date.now(),
                 username: data,
+                useremail: email,
                 item_categories: selected
             });
             Alert.alert("Post Added Succesfully!!")
