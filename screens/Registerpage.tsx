@@ -31,11 +31,13 @@ const Registerpage = ({ navigation }) => {
           // Signed up 
 
           const user = userCredential.user;
+          Alert.alert("Hurray....you Registerd succesfully PLease Log in");
           navigation.navigate("Login");
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          Alert.alert(errorMessage);
           // ..
         })
       }

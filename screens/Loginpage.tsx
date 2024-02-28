@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingViewComponent, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, getAuth } from 'firebase/auth'
 import { auth } from '../firebaseconfig';
 import { StackActions, useNavigation, useRoute } from "@react-navigation/native";
 import Iconic from "react-native-vector-icons/Ionicons";
@@ -23,11 +23,31 @@ const Loginpage = ({ navigation }) => {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          Alert.alert(errorMessage);
         })
     }
     else {
       Alert.alert("Enter valid email id or password.");
     }
+  }
+
+  const handleforgotpass = () => {
+   if(email!=null){
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        Alert.alert("Please check your email Password reset email is sent");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+        Alert.alert(errorMessage);
+      });
+   }
+   else{
+    Alert.alert("Please enter your valid email.");
+   }
   }
 
   return (
@@ -55,7 +75,7 @@ const Loginpage = ({ navigation }) => {
           underlineColorAndroid="#f000"
 
           blurOnSubmit={false}
-          style={{color:"white",fontSize:18,width:"90%" }}
+          style={{ color: "white", fontSize: 18, width: "90%" }}
         />
       </View>
 
@@ -73,7 +93,7 @@ const Loginpage = ({ navigation }) => {
           secureTextEntry={true}
           underlineColorAndroid="#f000"
           blurOnSubmit={false}
-          style={{color:"white",fontSize:18,width:"90%"}}
+          style={{ color: "white", fontSize: 18, width: "90%" }}
         />
       </View>
       <TouchableOpacity style={styles.button} onPress={create}>
@@ -87,6 +107,13 @@ const Loginpage = ({ navigation }) => {
         <Text style={{ color: "#07ab67", paddingLeft: 5, paddingTop: 20 }} onPress={() =>
           navigation.navigate('Register')}>Register</Text>
       </View>
+      <TouchableOpacity style={{
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 10
+      }} onPress={handleforgotpass}>
+        <Text style={{ color: "#07ab67", fontSize: 13 }}>Forgot Password?</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -101,7 +128,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop:20,
+    marginTop: 20,
     color: 'black',
     paddingLeft: 15,
     paddingRight: 15,
@@ -110,7 +137,7 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     fontSize: 15,
     width: "100%"
-  }, 
+  },
   maintext: {
     color: "white",
     fontSize: 40,

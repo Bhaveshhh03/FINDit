@@ -8,7 +8,7 @@ import Iconic from "react-native-vector-icons/Ionicons";
 const YourItem = ({ navigation }) => {
     const [items, setitems] = useState([]);
     const [refresh, setrefresh] = useState(false);
-    const [id, setid] = useState();
+    const [id, setid] = useState('');
     const itemlist = async () => {
         const q = query(collection(db, "items"), where("userId", "==", auth.currentUser?.uid));
 
@@ -17,17 +17,30 @@ const YourItem = ({ navigation }) => {
         querySnapshot.forEach((doc) => {
             itemArray.push(doc.data());
             setitems(itemArray);
-           // setid(doc.id());
+        //    setid(doc.id());
+           console.log(items);
         })};
 
-
+        const handledelete=async()=>{
+            const querySnapshot = await getDocs(collection(db, "items"));
+            querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
+              setid(doc.id);
+            });
+            await deleteDoc(doc(db, "items", "R581pMsfG2gpu5RjjiT7" ));
+            setTimeout(() => {
+                setid("");
+                Alert.alert("deleted succesfully")
+            }, 1000);
+        }
         useEffect(() => {
-
+            
             itemlist();
             navigation.addListener("focus", () => setrefresh(!refresh));
         }, [navigation, refresh])
 
-        postcard = props => {
+       postcard = props=> {
             return (
                 <View style={styles.card}>
 
@@ -51,7 +64,7 @@ const YourItem = ({ navigation }) => {
                     <View style={styles.divider}>
                     </View>
                     <View style={styles.postbutton}>
-                      <TouchableOpacity><Text>Delete</Text></TouchableOpacity>
+                      <TouchableOpacity onPress={handledelete}><Iconic name="trash-outline" size={25} color={"red"} /></TouchableOpacity>
                     </View>
                 </View>
             )
@@ -64,10 +77,8 @@ const YourItem = ({ navigation }) => {
                     data={items}
                     renderItem={({ item }) =>
                         this.postcard(item)
-
-
                     }
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.time}
                 />
             </View>
         );
@@ -110,7 +121,7 @@ const YourItem = ({ navigation }) => {
         },
         postbutton: {
             marginTop: 10,
-            marginLeft: 140,
+            marginLeft: 120,
             marginRight: 120,
             alignItems: "center",
 

@@ -28,6 +28,7 @@ const Post = (props) => {
         });
     }
     useEffect(() => {
+        
         getdata();
         handleupload();
     }, [])
@@ -72,7 +73,7 @@ const Post = (props) => {
 
 
     }
-    const found = async (url) => {
+    const found = async () => {
         if (name.length > 0 && description.length && lastLocation.length > 0) {
             const docRef = await addDoc(collection(db, "items"), {
                 name: name,
@@ -80,7 +81,7 @@ const Post = (props) => {
                 last_location: lastLocation,
                 userId: auth.currentUser?.uid,
                 item_type: "Found",
-                item_image: url,
+                item_image: picture,
                 time: Date.now(),
                 username: data,
                 useremail: email,
@@ -119,7 +120,7 @@ const Post = (props) => {
             console.log("uploaded blob file");
             getDownloadURL(snapshot.ref).then((downloadUrl) => {
                 console.log(downloadUrl);
-                found(downloadUrl);
+                setpicture(downloadUrl);
             })
         })
     }
