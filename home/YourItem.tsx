@@ -124,10 +124,6 @@ const YourItem = ({ navigation }) => {
             marginLeft: 120,
             marginRight: 120,
             alignItems: "center",
-
-
-
         }
     })
-
     export default YourItem;

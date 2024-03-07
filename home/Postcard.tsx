@@ -143,13 +143,11 @@ const styles = StyleSheet.create({
         color: "black"
     },
     divider: {
-
         borderWidth: 0.5,
         borderColor: "black",
         width: "99%"
     },
     postinfo: {
-
         paddingTop: 10,
         fontSize: 16,
         color: "black"
@@ -162,7 +160,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: "#07ab67"
-
     }
 });
 export default Postcard;

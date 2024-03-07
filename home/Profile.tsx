@@ -1,60 +1,120 @@
 import React, { useEffect, useState } from "react"
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import Iconic from "react-native-vector-icons/Ionicons";
 import { auth, db } from "../firebaseconfig";
 import { StackActions } from "react-navigation";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
-const Profile = ({ navigation,props }) => {
-    const [data, setdata] = useState();
+import UpdateProfile from "./UpdateProfile";
+const Profile = ({ navigation }) => {
+    const [data, setdata] = useState('');
+    const [name, setname] = useState('');
+    const [email, setemail] = useState('');
     const getdata = async () => {
-        const q = query(collection(db, "users"), where("email", "==", auth.currentUser?.email));
-
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.data());
-          setdata(doc.data().name);
-        });
+        const docRef = doc(db, "users", auth.currentUser?.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+          setdata(docSnap.data().name)
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+          
         }
-        
-        
-        useEffect(() => {
-            getdata();
-        }, [])
+    }
 
-    
+    useEffect(() => {
+        getdata();
+        setdata('');
+    }, [])
+
+
     return (
         <View style={styles.container}>
-            <View style={styles.logout}>
-                <Text style={{ color: "white", fontSize: 20 }}>Hello , {data} 👋 </Text>
 
-                <TouchableOpacity style={styles.button}
+            <Text style={{
+                color: "white",
+                fontSize: 28,
+                justifyContent: 'center',
+                textAlign: 'center'
+            }}>
+                Hello,</Text>
+            <Text style={{
+                color: "white",
+                fontSize: 20,
+                fontWeight: 'bold',
+                justifyContent: 'center',
+                textAlign: 'center'
+            }}>
+                {data} 👋
+            </Text>
 
-                    onPress={async () => {
-                        await auth.signOut();
-                        // navigation.dispatch(StackActions.popToTop());
-                    }}>
-                    <Iconic name="log-out-outline" size={25} color={"red"} />
 
+            <View style={styles.subcontainer}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Updateprofile')}>
+                    <Text style={{ color: 'black',fontSize:17 }}>
+                        Update Profile
+                    </Text>
                 </TouchableOpacity>
-
+                <TouchableOpacity style={styles.logoutbutton} onPress={async () => {
+                    await auth.signOut();
+                    // navigation.dispatch(StackActions.popToTop());
+                    Alert.alert("You have been Logged out!")
+                }} >
+                    <Text style={{ color: 'white',fontSize:17 }}>
+                        Log Out
+                    </Text>
+                </TouchableOpacity>
             </View>
         </View>
+
     )
 }
 const styles = StyleSheet.create({
     container: {
         height: "100%",
-        paddingHorizontal: 30,
+        paddingHorizontal: 3,
         paddingTop: 10,
         backgroundColor: "#121e2c"
     },
-    button: {
-        paddingLeft: 30,
-        marginBottom: 20
+    subcontainer: {
+        height: "100%",
+        paddingHorizontal: 0,
+        paddingTop: 30,
+        backgroundColor: "#121e2c"
     },
-    logout: {
-        flexDirection: "row"
+    button: {
+        marginTop: 20,
+        height: 50,
+        borderColor: 'white',
+        backgroundColor: "#07ab67",
+        paddingLeft: 10,
+        borderRadius: 10,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    logoutbutton: {
+        marginTop: 20,
+        height: 50,
+        borderColor: 'white',
+        backgroundColor: "red",
+        paddingLeft: 10,
+        borderRadius: 10,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    inputContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 20,
+        color: 'white',
+        paddingLeft: 15,
+        paddingRight: 15,
+        borderWidth: 1,
+        borderRadius: 15,
+        borderColor: 'white',
+        fontSize: 15,
+        width: "100%"
     },
 })
 

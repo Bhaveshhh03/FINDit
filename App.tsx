@@ -49,7 +49,7 @@ const App=()=> {
         <Stack.Screen name="Logo" component={Logoscreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Loginpage} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={Registerpage} options={{ headerShown: false }} />
-        <Stack.Screen name="MainHome" component={BottomNavigate} options={{
+        <Stack.Screen name="MainHome" component={BottomNavigate} options={{ 
           headerTitle:"FINDit",
           headerTitleAlign:"center",
           headerStyle:{backgroundColor:"#121e2c",},

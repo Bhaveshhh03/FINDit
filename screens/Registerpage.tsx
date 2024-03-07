@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingViewComponent, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from '../firebaseconfig';
-import { Firestore, addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { Firestore, addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Iconic from 'react-native-vector-icons/Ionicons';
+import { log } from "react-native-reanimated";
 
 
 
@@ -14,48 +15,48 @@ const Registerpage = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [user, setuser] = useState('');
 
-  const userinfo = async () => {
-    const docRef = await addDoc(collection(db, "users"), {
-      name: name,
-      email:email,
-     
-    });
-  }
-
-  const create = () => {
-    if (email.length > 0 &&  password.length >0 ) {
-      if(password.length>5){
+  const create = async () => {
+    if (email.length > 0 && password.length > 0) {
+      if (password.length > 5) {
         createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed up 
+          .then(async (userCredential) => {
+            // Signed up 
+            navigation.navigate("Login");
+            await setDoc(doc(db, "users", auth.currentUser?.uid), {
+              name: name,
+              email: email,
+              date: serverTimestamp()
+            });
+            Alert.alert("Hurray....you Registerd succesfully PLease Log in");
 
-          const user = userCredential.user;
-          Alert.alert("Hurray....you Registerd succesfully PLease Log in");
-          navigation.navigate("Login");
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          Alert.alert(errorMessage);
-          // ..
-        })
+            console.log(user);
+
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            Alert.alert(errorMessage);
+            // ..
+          })
       }
-      else{
-          Alert.alert("password have atleast 6 or more than 6 characters")
+
+      else {
+        Alert.alert("password have atleast 6 or more than 6 characters")
       }
-     
+
     }
 
     else {
       Alert.alert("Enter valid email id or password.")
     }
-      userinfo();
+    
+
   }
 
   useEffect(() => {
     onAuthStateChanged(auth, (data) => {
-      console.log(data);
     })
   })
 
@@ -133,7 +134,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 30,
     backgroundColor: "#121e2c"
-
   },
   inputContainer: {
     flexDirection: "row",
@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     fontSize: 15,
     width: "100%"
-
   },
 
   maintext: {

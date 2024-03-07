@@ -3,14 +3,14 @@ import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, TextInput, Touc
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from '../firebaseconfig';
 import { useRoute, useNavigation, StackActions, NavigationContainer, useFocusEffect } from "@react-navigation/native";
-import { addDoc, collection, doc, getDoc, getDocs, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy } from "firebase/firestore";
 import { SelectList } from 'react-native-dropdown-select-list'
 import Iconic from "react-native-vector-icons/Ionicons";
 import Postcard from "./Postcard";
 
 const Homepage = ({ navigation }) => {
 
-    const [item, setitems] = useState([]);
+    const [items, setitems] = useState([]);
     const [olditems, setolditems] = useState([]);
     const [refresh, setrefresh] = useState(false);
     const [selected, setSelected] = React.useState("");
@@ -22,6 +22,7 @@ const Homepage = ({ navigation }) => {
             itemArray.push(doc.data());
             setitems(itemArray);
             setolditems(itemArray);
+            console.log(items);
         });
 
     }
@@ -86,13 +87,9 @@ const Homepage = ({ navigation }) => {
                 save="value" />
 
             <FlatList style={{ marginTop: 20 }}
-                data={item}
+                data={items}
                 renderItem={({ item }) => filteritem(item)}
                 keyExtractor={item => item.time} />
-
-
-
-
         </View>
     );
 }
@@ -146,7 +143,5 @@ const styles = StyleSheet.create({
         fontSize: 18,
         height: 44,
     }
-
 })
-
 export default Homepage;
