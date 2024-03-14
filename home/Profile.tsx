@@ -6,7 +6,7 @@ import { StackActions } from "react-navigation";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import UpdateProfile from "./UpdateProfile";
 const Profile = ({ navigation }) => {
-    const [data, setdata] = useState('');
+    const [data, setdata] = useState(null);
     const [name, setname] = useState('');
     const [email, setemail] = useState('');
     const getdata = async () => {
@@ -25,7 +25,7 @@ const Profile = ({ navigation }) => {
 
     useEffect(() => {
         getdata();
-        setdata('');
+        setdata(null);
     }, [])
 
 

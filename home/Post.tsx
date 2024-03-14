@@ -10,12 +10,13 @@ const Post = (props) => {
     const [items, setitems] = useState([]);
     const [name, setname] = useState('');
     const [imagedata, setimagedata] = useState(null);
-    const [picture, setpicture] = useState('');
+    const [picture, setPicture] = useState(null);
     const [description, setdescription] = useState('');
     const [lastLocation, setlastLocation] = useState('');
     const [userId, setuserId] = useState('');
     const [data, setdata] = useState();
-    const [email, setemail] = useState()
+    const [email, setemail] = useState();
+    const [role, setrole] = useState();
     const getdata = async () => {
         const q = query(collection(db, "users"), where("email", "==", auth.currentUser?.email));
 
@@ -25,10 +26,11 @@ const Post = (props) => {
             console.log(doc.data());
             setdata(doc.data().name);
             setemail(doc.data().email);
+            setrole(doc.data().role)
         });
     }
     useEffect(() => {
-        
+        setimagedata(null);
         getdata();
         handleupload();
     }, [])
@@ -56,10 +58,11 @@ const Post = (props) => {
                 userId: auth.currentUser?.uid,
                 item_type: "Lost",
                 item_image: picture,
-                time: Date.now(),
                 username: data,
                 useremail: email,
-                item_categories: selected
+                item_categories: selected,
+                role,
+                time: Date.now()
             });
             Alert.alert("Post Added Succesfully!!")
             setname("");
@@ -71,7 +74,7 @@ const Post = (props) => {
             Alert.alert("Please enter all Fields!!")
         }
 
-
+        setimagedata(null);
     }
     const found = async () => {
         if (name.length > 0 && description.length && lastLocation.length > 0) {
@@ -82,10 +85,11 @@ const Post = (props) => {
                 userId: auth.currentUser?.uid,
                 item_type: "Found",
                 item_image: picture,
-                time: Date.now(),
                 username: data,
                 useremail: email,
-                item_categories: selected
+                item_categories: selected,
+                role,
+                time: Date.now()
             });
             Alert.alert("Post Added Succesfully!!")
             setname("");
@@ -96,7 +100,8 @@ const Post = (props) => {
         else {
             Alert.alert("Please enter all Fields!!")
         }
-
+        setimagedata(null);
+        setSelected('');
     }
 
     const pickimage = async () => {
@@ -106,7 +111,7 @@ const Post = (props) => {
         }).then(res => {
             if (!res.didCancel) {
                 setimagedata(res.assets[0].uri);
-                console.log("ressss",res.assets[0].uri);
+                console.log("ressss", res.assets[0].uri);
                 handleupload();
             }
         })
@@ -120,10 +125,13 @@ const Post = (props) => {
             console.log("uploaded blob file");
             getDownloadURL(snapshot.ref).then((downloadUrl) => {
                 console.log(downloadUrl);
-                setpicture(downloadUrl);
-            })
-        })
-    }
+                setPicture(downloadUrl);
+            });
+        });
+    };
+    useEffect(() => {
+        console.log(picture); // This will log the updated value of picture
+    }, [picture]);
     const [selected, setSelected] = React.useState("");
 
     const itemcategories = [
@@ -134,13 +142,24 @@ const Post = (props) => {
         { key: '5', value: 'Identiy Card' },
         { key: '6', value: 'Stationary' },
         { key: '7', value: 'Documents' },
-        { key: '8', value: 'Others' },
+        { key: '8', value: 'Key' },
+        { key: '9', value: 'Wallet' },
+        { key: '10', value: 'Others' },
     ]
     console.log("select val", selected);
     return (
 
 
         <View style={styles.container}>
+            {imagedata !== null ? (
+                <Image
+                    style={{ marginLeft: 4, marginBottom: 5, width: 150, height: 150, borderRadius: 5 }}
+                    source={{ uri: imagedata }} />
+            ) : (
+                <Image
+                    style={{ marginLeft: 4, marginBottom: 5, width: 150, height: 150, borderRadius: 5 }}
+                    source={require('../images/gallery.png')} />
+            )}
             <View style={styles.postcontainer}>
                 <TextInput style={styles.field}
                     value={name}

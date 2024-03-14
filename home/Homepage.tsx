@@ -41,6 +41,7 @@ const Homepage = ({ navigation }) => {
                     username={item.username}
                     item_type={item.item_type}
                     item_image={item.item_image}
+                    role={item.role}
                     email={item.useremail} />
             )
         }
@@ -52,6 +53,7 @@ const Homepage = ({ navigation }) => {
                     username={item.username}
                     item_type={item.item_type}
                     item_image={item.item_image}
+                    role={item.role}
                     email={item.useremail} />
             )
         }
@@ -67,7 +69,9 @@ const Homepage = ({ navigation }) => {
         { key: '6', value: 'Stationary' },
         { key: '7', value: 'Documents' },
         { key: '8', value: 'Mobiles' },
-        { key: '9', value: 'Others' },
+        { key: '9', value: 'Key' },
+        { key: '10', value: 'Wallet' },
+        { key: '11', value: 'Others' },
     ]
     return (
 

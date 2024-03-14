@@ -6,9 +6,7 @@ import { Firestore, addDoc, collection, doc, serverTimestamp, setDoc } from "fir
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Iconic from 'react-native-vector-icons/Ionicons';
 import { log } from "react-native-reanimated";
-
-
-
+import { SelectList } from "react-native-dropdown-select-list";
 
 const Registerpage = ({ navigation }) => {
 
@@ -16,8 +14,14 @@ const Registerpage = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [user, setuser] = useState('');
-
+  const [selected, setSelected] = React.useState("");
+  const itemcategories = [
+    { key: '1', value: 'Student' },
+    { key: '2', value: 'Faculty' },
+    { key: '3', value: 'External' },
+  ]
   const create = async () => {
+
     if (email.length > 0 && password.length > 0) {
       if (password.length > 5) {
         createUserWithEmailAndPassword(auth, email, password)
@@ -27,6 +31,7 @@ const Registerpage = ({ navigation }) => {
             await setDoc(doc(db, "users", auth.currentUser?.uid), {
               name: name,
               email: email,
+              role: selected,
               date: serverTimestamp()
             });
             Alert.alert("Hurray....you Registerd succesfully PLease Log in");
@@ -51,8 +56,6 @@ const Registerpage = ({ navigation }) => {
     else {
       Alert.alert("Enter valid email id or password.")
     }
-    
-
   }
 
   useEffect(() => {
@@ -68,7 +71,17 @@ const Registerpage = ({ navigation }) => {
       <Text style={styles.subtext}>
         Register
       </Text>
-
+      <SelectList
+        arrowicon={<Iconic name="chevron-down-outline" size={25} color={"white"} />}
+        searchicon={<Iconic name="person" size={20} color={"white"} />}
+        closeicon={<Iconic name="close-outline" size={25} color={"white"} />}
+        inputStyles={{ color: "white", fontSize: 15 }}
+        dropdownTextStyles={{ color: "white" }}
+        boxStyles={{ borderRadius: 15, borderColor: "white" }}
+        setSelected={(val) => setSelected(val)}
+        data={itemcategories}
+        save="value"
+      />
       <View style={styles.inputContainer}>
         <Iconic name="person" size={20} color={"white"} />
         <TextInput
@@ -157,7 +170,8 @@ const styles = StyleSheet.create({
   },
   subtext: {
     color: "white",
-    marginTop: 80,
+    marginTop: 50,
+    marginBottom: 30,
     textAlign: "center",
     fontSize: 24,
     fontWeight: "bold",

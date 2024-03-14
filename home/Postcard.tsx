@@ -93,8 +93,10 @@ const Postcard = (props) => {
 
         <View style={styles.card}>
 
+            <View style={{flexDirection:"row",marginBottom:10}}>
             <Text style={styles.userinfo} > {props.username}</Text>
-
+            <Text style={{paddingTop:15,marginLeft:5,fontWeight:"bold"}}>({props.role})</Text>
+            </View>
             {imagedata==null?(null
             ):<Image style={{ marginLeft: 4, marginBottom: 5 }}
             source={{ uri: props.item_image }}
@@ -115,9 +117,9 @@ const Postcard = (props) => {
             <View style={styles.postbutton}>
                 {props.item_type == "Lost" ?
                     <TouchableOpacity  onPress={() => setopenmodal(true)}>
-                        <Text>found</Text>
+                        <Text style={{color:"white"}}>Found</Text>
                     </TouchableOpacity> : <TouchableOpacity  onPress={() => setopenmodal(true)}>
-                        <Text>Contact</Text>
+                        <Text style={{color:"white"}}>Contact</Text>
                     </TouchableOpacity>}
             </View>
             {emailtextbox(props.email)}
@@ -136,8 +138,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     userinfo: {
-        paddingTop: 10,
-        paddingBottom: 10,
+        paddingTop: 10,      
         fontWeight: "bold",
         fontSize: 20,
         color: "black"
