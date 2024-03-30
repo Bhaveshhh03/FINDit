@@ -8,7 +8,8 @@ const Postcard = (props) => {
     const [openmodal, setopenmodal] = useState(false);
     const [Emailtext, setEmailtext] = useState('');
     const emailsubmit=(useremail)=>{
-      Linking.openURL(`mailto:${useremail}?body:${Emailtext}`)
+      Linking.openURL(`mailto:${useremail}?subject=SendMail&body=${Emailtext}`)
+      setEmailtext('');
     }
     function emailtextbox(useremail) {
 

@@ -5,7 +5,7 @@ import { auth, db } from "../firebaseconfig";
 import { StackActions } from "react-navigation";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import UpdateProfile from "./UpdateProfile";
-const Profile = ({ navigation }) => {
+const Profile = ({ navigation ,props}) => {
     const [data, setdata] = useState(null);
     const [name, setname] = useState('');
     const [email, setemail] = useState('');
@@ -23,9 +23,9 @@ const Profile = ({ navigation }) => {
         }
     }
 
-    useEffect(() => {
-        getdata();
-        setdata(null);
+    useEffect(() => { 
+        console.log(data);
+        getdata();        
     }, [])
 
 
@@ -39,15 +39,15 @@ const Profile = ({ navigation }) => {
                 textAlign: 'center'
             }}>
                 Hello,</Text>
-            <Text style={{
-                color: "white",
-                fontSize: 20,
-                fontWeight: 'bold',
-                justifyContent: 'center',
-                textAlign: 'center'
-            }}>
-                {data} 👋
-            </Text>
+                <Text style={{
+                    color: "white",
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    justifyContent: 'center',
+                    textAlign: 'center'
+                }}>
+                    {data} 👋
+                </Text>
 
 
             <View style={styles.subcontainer}>

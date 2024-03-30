@@ -3,6 +3,7 @@ import React, { Component, useEffect, useState } from 'react'
 import Iconic from "react-native-vector-icons/Ionicons";
 import { collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseconfig";
+import Profile from './Profile';
 
 const UpdateProfile = ({ navigation }) => {
     const [dataname, setdataname] = useState('');
@@ -22,12 +23,13 @@ const UpdateProfile = ({ navigation }) => {
     }
     const handleupdate =async () => {
         const userRef = doc(db, "users", `${auth.currentUser?.uid}`);
-
-        // Set the "capital" field of the city 'DC'
         await updateDoc(userRef, {
             name:name,
         });
         Alert.alert("Information updated succesfully!!")
+        //navigation.navigate("Profile");
+        console.log(name);
+        <Profile name={name}/>
     }
     useEffect(() => {
         getdata();

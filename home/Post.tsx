@@ -47,9 +47,7 @@ const Post = (props) => {
     }
 
     const lost = async () => {
-        if (picture == null) {
-            return null;
-        }
+       
         if (name.length > 0 && description.length && lastLocation.length > 0) {
             const docRef = await addDoc(collection(db, "items"), {
                 name: name,
@@ -62,7 +60,8 @@ const Post = (props) => {
                 useremail: email,
                 item_categories: selected,
                 role,
-                time: Date.now()
+                time: Date.now(),
+                
             });
             Alert.alert("Post Added Succesfully!!")
             setname("");
@@ -89,7 +88,8 @@ const Post = (props) => {
                 useremail: email,
                 item_categories: selected,
                 role,
-                time: Date.now()
+                time: Date.now(),
+                
             });
             Alert.alert("Post Added Succesfully!!")
             setname("");
@@ -101,7 +101,6 @@ const Post = (props) => {
             Alert.alert("Please enter all Fields!!")
         }
         setimagedata(null);
-        setSelected('');
     }
 
     const pickimage = async () => {
@@ -153,11 +152,11 @@ const Post = (props) => {
         <View style={styles.container}>
             {imagedata !== null ? (
                 <Image
-                    style={{ marginLeft: 4, marginBottom: 5, width: 150, height: 150, borderRadius: 5 }}
+                    style={{ marginLeft: 4, marginBottom: 5, width: 150, height: 150, borderRadius: 20 }}
                     source={{ uri: imagedata }} />
             ) : (
                 <Image
-                    style={{ marginLeft: 4, marginBottom: 5, width: 150, height: 150, borderRadius: 5 }}
+                    style={{ marginLeft: 4, marginBottom: 5, width: 150, height: 150, borderRadius: 10 }}
                     source={require('../images/gallery.png')} />
             )}
             <View style={styles.postcontainer}>

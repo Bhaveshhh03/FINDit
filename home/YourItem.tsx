@@ -1,129 +1,118 @@
-import { collection, deleteDoc, doc, getDocs, onSnapshot, query, where } from "firebase/firestore";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, FlatList, Alert, Image } from "react-native";
+import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, Alert, Image } from "react-native";
 import { auth, db } from "../firebaseconfig";
-import Postcard from "./Postcard";
 import Iconic from "react-native-vector-icons/Ionicons";
 
 const YourItem = ({ navigation }) => {
-    const [items, setitems] = useState([]);
-    const [refresh, setrefresh] = useState(false);
-    const [id, setid] = useState('');
-    const itemlist = async () => {
-        const q = query(collection(db, "items"), where("userId", "==", auth.currentUser?.uid));
+    const [items, setItems] = useState([]);
 
-        const querySnapshot = await getDocs(q);
-        let itemArray: any = [];
-        querySnapshot.forEach((doc) => {
-            itemArray.push(doc.data());
-            setitems(itemArray);
-        //    setid(doc.id());
-           console.log(items);
-        })};
-
-        const handledelete=async()=>{
-            const querySnapshot = await getDocs(collection(db, "items"));
-            querySnapshot.forEach((doc) => {
-              // doc.data() is never undefined for query doc snapshots
-              console.log(doc.id, " => ", doc.data());
-              setid(doc.id);
-            });
-            await deleteDoc(doc(db, "items", "R581pMsfG2gpu5RjjiT7" ));
-            setTimeout(() => {
-                setid("");
-                Alert.alert("deleted succesfully")
-            }, 1000);
-        }
-        useEffect(() => {
+    // Function to fetch items from Firestore
+    const fetchItems = async () => {
+        try {
+            const q = query(collection(db, "items"), where("userId", "==", auth.currentUser?.uid));
+            const querySnapshot = await getDocs(q);
+            const fetchedItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setItems(fetchedItems);
             
-            itemlist();
-            navigation.addListener("focus", () => setrefresh(!refresh));
-        }, [navigation, refresh])
+        } catch (error) {
+            console.error("Error fetching items:", error);
+        }
+    };
 
-       postcard = props=> {
-            return (
+    // Function to handle item deletion
+    const handleDelete = async (itemId) => {
+        try {
+            await deleteDoc(doc(db, "items", itemId));
+            Alert.alert("Deleted successfully");
+            // Refresh the list after deletion
+            fetchItems();
+        } catch (error) {
+            console.error("Error deleting item:", error);
+        }
+    };
+   
+    
+    // Fetch items on component mount and when navigation focus changes
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => fetchItems());
+        return unsubscribe;
+    }, [navigation]);
+
+    // Render individual item
+   
+    
+        const renderItem = ({ item }) => (                
                 <View style={styles.card}>
-
-                    <Text style={styles.userinfo} > {props.username}</Text>
-
-                    <Image style={{ marginLeft: 5, marginBottom: 5 }}
-                        source={{ uri: props.item_image }}
-                        width={290}
-                        height={400}
-                    />
-                    <View style={styles.divider}>
-                    </View>
-                    <Text style={styles.postinfo} >
-                        Item Name : {props.name}{'\n'}
-                        Item Description : {props.description}{'\n'}
-                        Item's Last Location : {props.last_location}
-                    </Text>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, color: "black", alignSelf: "center" }}>
-                        Item is {props.item_type} !!
-                    </Text>
-                    <View style={styles.divider}>
-                    </View>
-                    <View style={styles.postbutton}>
-                      <TouchableOpacity onPress={handledelete}><Iconic name="trash-outline" size={25} color={"red"} /></TouchableOpacity>
-                    </View>
+                <Text style={styles.userinfo}>{item.username}</Text>
+                <Image style={{ marginLeft: 5, marginBottom: 5 }} source={{ uri: item.item_image }} width={290} height={400} />
+                <View style={styles.divider}></View>
+                <Text style={styles.postinfo}>
+                    Item Name: {item.name}{'\n'}
+                    Item Description: {item.description}{'\n'}
+                    Item's Last Location: {item.last_location}
+                </Text>
+                <Text style={{ fontWeight: "bold", fontSize: 20, color: "black", alignSelf: "center" }}>
+                    Item is {item.item_type} !!
+                </Text>
+                <View style={styles.divider}></View>
+                <View style={styles.postbutton}>
+                    <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                        <Iconic name="trash-outline" size={25} color={"red"} />
+                    </TouchableOpacity>
                 </View>
-            )
-        }
-
-
-        return (
-            <View style={styles.container}>
-                <FlatList
-                    data={items}
-                    renderItem={({ item }) =>
-                        this.postcard(item)
-                    }
-                    keyExtractor={item => item.time}
-                />
             </View>
+             
         );
-    }
-    const styles = StyleSheet.create({
-        container: {
-            height: "100%",
-            paddingHorizontal: 30,
-            paddingTop: 30,
-            backgroundColor: "#121e2c",
-            justifyContent: "center",
-            alignItems: "center",
-        },
-        card: {
-            paddingLeft: 13,
-            paddingRight: 10,
-            paddingBottom: 15,
-            backgroundColor: "silver",
-            width: "100%",
-            marginBottom: 20,
-            borderRadius: 10
-        },
-        postinfo: {
+    
 
-            paddingTop: 10,
-            fontSize: 16,
-            color: "black"
-        },
-        divider: {
-            borderWidth: 0.5,
-            borderColor: "black",
-            width: "94%"
-        },
-        userinfo: {
-            paddingTop: 10,
-            paddingBottom: 10,
-            fontWeight: "bold",
-            fontSize: 20,
-            color: "black"
-        },
-        postbutton: {
-            marginTop: 10,
-            marginLeft: 120,
-            marginRight: 120,
-            alignItems: "center",
-        }
-    })
-    export default YourItem;
+    return (
+        <View style={styles.container}>
+             <FlatList
+             data={items}
+             renderItem={renderItem}
+             keyExtractor={item => item.id}
+         />
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#121e2c",
+        paddingHorizontal: 30,
+        paddingTop: 30,
+    },
+    card: {
+        paddingLeft: 13,
+        paddingRight: 10,
+        paddingBottom: 15,
+        backgroundColor: "silver",
+        marginBottom: 20,
+        borderRadius: 10,
+    },
+    postinfo: {
+        paddingTop: 10,
+        fontSize: 16,
+        color: "black",
+    },
+    divider: {
+        borderWidth: 0.5,
+        borderColor: "black",
+        width: "94%",
+    },
+    userinfo: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        fontWeight: "bold",
+        fontSize: 20,
+        color: "black",
+    },
+    postbutton: {
+        marginTop: 10,
+        alignSelf: "center",
+    },
+});
+
+export default YourItem;

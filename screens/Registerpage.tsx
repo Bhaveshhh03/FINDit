@@ -71,6 +71,7 @@ const Registerpage = ({ navigation }) => {
       <Text style={styles.subtext}>
         Register
       </Text>
+      <Text style={{color:"white", marginLeft:10,marginBottom:10}}>Please Select between the Student , Faculty or External user below</Text>
       <SelectList
         arrowicon={<Iconic name="chevron-down-outline" size={25} color={"white"} />}
         searchicon={<Iconic name="person" size={20} color={"white"} />}
